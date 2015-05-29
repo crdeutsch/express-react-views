@@ -13,7 +13,8 @@ var assign = require('object-assign');
 
 var DEFAULT_OPTIONS = {
   doctype: '<!DOCTYPE html>',
-  beautify: false
+  beautify: false,
+  skipBabelRegister: false
 };
 
 function createEngine(engineOptions) {
@@ -26,11 +27,13 @@ function createEngine(engineOptions) {
     // Defer babel registration until the first request so we can grab the view path.
     if (!registered) {
       moduleDetectRegEx = new RegExp('^' + options.settings.views);
-      // Passing a RegExp to Babel results in an issue on Windows so we'll just
-      // pass the view path.
-      require('babel/register')({
-        only: options.settings.views
-      });
+      if (!engineOptions.skipBabelRegister) {
+        // Passing a RegExp to Babel results in an issue on Windows so we'll just
+        // pass the view path.
+        require('babel/register')({
+          only: options.settings.views
+        });
+      }
       registered = true;
     }
 
